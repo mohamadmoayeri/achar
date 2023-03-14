@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -46,11 +46,13 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     'corsheaders',
+    'django_redis',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -130,3 +132,38 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.UserModel'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ],
+  
+    'NON_FIELD_ERRORS_KEY': 'error',
+    'EXCEPTION_HANDLER': 'reusable.exceptions.base_exception_handler',
+}
+
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': os.environ.get('REDIS_BACKEND', 'django_redis.cache.RedisCache'),
+        'LOCATION': os.environ.get('REDIS_LOCATION', "redis://achar_redis:6379/3"),
+        'TIMEOUT': os.environ.get('REDIS_TIMEOUT', '86400'),  # 1 day
+        'KEY_PREFIX': 'mhdclub',
+    }
+}
+
+# CELERY
+CELERY_BROKER_URL = "redis://achar_redis:6379"
+CELERY_RESULT_BACKEND = "redis://achar_redis:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Tehran"
+
+# CORS
+CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
+CORS_ALLOW_CREDENTIALS = True

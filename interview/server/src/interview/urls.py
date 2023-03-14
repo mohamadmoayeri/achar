@@ -14,8 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
+from rest_framework.routers import DefaultRouter
+from reusable.swaggers import schema_view
+
+# API URLs
+from users.api.urls import router as users_router
+
+router = DefaultRouter()
+router.registry.extend(users_router.registry)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path(r'^(?P<version>(v1|v2))/api/', include(router.urls)),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

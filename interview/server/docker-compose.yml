@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  achar_server:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./src:/app/src
+
+    command: >
+      sh -c "celery -A interview worker -B -l info &
+            python3 /app/src/manage.py makemigrations &&
+            /app/src/manage.py migrate &&
+            /app/src/manage.py test &&
+            /app/src/manage.py runserver 0:8000"
+
+    depends_on:
+      - achar_redis
+
+
+  achar_redis:
+    container_name : otc_redis
+    image: redis:5.0.8
+    restart: always
