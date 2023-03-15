@@ -27,14 +27,14 @@ def get_client_ip(request):
     return ip
 
 def check_wrong_ip(ip):
+    result = None
     number_of_wrong_ip = 0
     if cache.has_key(f'{ip}_wrong_number'):
             number_of_wrong_ip = cache.get(f'{ip}_wrong_number')
-    print(number_of_wrong_ip)
     if number_of_wrong_ip >= 3:
         ttl = translate_number(cache.ttl(f'{ip}_wrong_number'))
-        raise PermissionDenied({"error" : Messages.TTL_ERROR.value.format(ttl)})
-    return True
+        result = ttl
+    return result
          
 def check_wrong_mobile_number(mobile_number):
     number_of_wrong_mobile_number = 0
@@ -42,6 +42,6 @@ def check_wrong_mobile_number(mobile_number):
             number_of_wrong_mobile_number = cache.get(f'{mobile_number}_wrong_number')
     if number_of_wrong_mobile_number >= 3:
         ttl = translate_number(cache.ttl(f'{mobile_number}_wrong_number'))
-        raise PermissionDenied({"error" : Messages.TTL_ERROR.value.format(ttl)})
+        raise ValidationError({"error" : Messages.TTL_ERROR.value.format(ttl)})
     return True
 

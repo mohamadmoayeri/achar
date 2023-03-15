@@ -58,6 +58,8 @@ def need_to_anonymous(detail): return ".برای دسترسی به این قسم
 
 def link_is_wrong(detail): return ".لینک معتبر نمی باشد"
 
+def ip_is_locked(detail): return detail
+
 class Messages(Enum):
     translate_to_persian = {
         "wallet_foreinaddress.label" : "آدرس دیگری با این نام در سامانه موجود می باشد",

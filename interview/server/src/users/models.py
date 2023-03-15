@@ -94,7 +94,10 @@ class UserModel(AbstractUser):
         if not validate_password:
             UserModel.lock_ip(ip=ip)
             UserModel.lock_mobile_number(self.mobile_number)
-            raise ValidationError({'error': Messages.INCORRECT_PASSWORD_OR_MOBILE_NUMBER.value})
+            raise ValidationError(
+                detail=Messages.INCORRECT_PASSWORD_OR_MOBILE_NUMBER.value,
+                code=f"translated_{ValidationError.default_code}"
+            )
         return {
                 'refresh': self.tokens()['refresh'],
                 'access': self.tokens()['access']

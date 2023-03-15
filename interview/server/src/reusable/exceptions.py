@@ -11,7 +11,7 @@ from .error_translation import does_not_exist, blank, required, invalid_choice,\
                                unique, password_too_short, password_too_common,\
                                password_entirely_numeric, password_too_similar,\
                                need_to_kyc, need_to_national_card, need_to_anonymous,\
-                               link_is_wrong
+                               link_is_wrong, ip_is_locked
 
 from rest_framework.exceptions import ErrorDetail
 
